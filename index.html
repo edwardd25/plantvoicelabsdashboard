@@ -1410,9 +1410,11 @@
         // ==========================================
         // FETCH HISTORY DATA FOR CHART
         // ==========================================
-        async function fetchHistoryData() {
+        let currentChartHours = 24;
+
+        async function fetchHistoryData(hours = 24) {
             try {
-                const response = await fetch(`${API_BASE_URL}/api/v1/dashboard/history?hours=24`);
+                const response = await fetch(`${API_BASE_URL}/api/v1/dashboard/history?hours=${hours}`);
                 const data = await response.json();
                 
                 if (data.success && data.data) {
@@ -1440,7 +1442,7 @@
             
             // Update phase info if available
             if (phase) {
-                updatePhaseInfo(phase);
+                updatePhaseInfo(phase, data.experiment_day);
             }
             
             for (const [key, config] of Object.entries(sensorMapping)) {
@@ -1467,12 +1469,16 @@
             }
         }
         
-        function updatePhaseInfo(phase) {
-            // Update plant title to show current phase
+        function updatePhaseInfo(phase, experimentDay) {
+            // Update plant title to show current phase and day
             const plantTitle = document.querySelector('.plant-voice-title-text h3');
             if (plantTitle) {
                 const phaseName = phase.name.charAt(0).toUpperCase() + phase.name.slice(1);
-                plantTitle.textContent = `Eggplant - ${phaseName} Phase`;
+                if (experimentDay) {
+                    plantTitle.textContent = `Eggplant - Day ${experimentDay} (${phaseName})`;
+                } else {
+                    plantTitle.textContent = `Eggplant - ${phaseName} Phase`;
+                }
             }
         }
         
@@ -1755,11 +1761,24 @@
             }
         });
 
-        // Chart tab switching
+        // Chart tab switching with data fetch
         document.querySelectorAll('.chart-tab').forEach(tab => {
-            tab.addEventListener('click', function() {
+            tab.addEventListener('click', async function() {
                 document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
                 this.classList.add('active');
+                
+                // Determine hours based on tab text
+                const tabText = this.textContent.trim();
+                if (tabText === '24H') {
+                    currentChartHours = 24;
+                } else if (tabText === '7D') {
+                    currentChartHours = 168;
+                } else if (tabText === '30D') {
+                    currentChartHours = 720;
+                }
+                
+                // Fetch new data
+                await fetchHistoryData(currentChartHours);
             });
         });
 
