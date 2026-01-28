@@ -1436,6 +1436,12 @@
         function updateSensorDisplay(data) {
             const sensors = data.sensors;
             const analysis = data.analysis?.sensors || {};
+            const phase = data.phase;
+            
+            // Update phase info if available
+            if (phase) {
+                updatePhaseInfo(phase);
+            }
             
             for (const [key, config] of Object.entries(sensorMapping)) {
                 const card = document.querySelector(config.selector);
@@ -1445,7 +1451,9 @@
                     
                     if (valueEl) {
                         const value = sensors[key].value;
-                        valueEl.textContent = `${value}${config.unit}`;
+                        // Round to 1 decimal place for cleaner display
+                        const displayValue = typeof value === 'number' ? Math.round(value * 10) / 10 : value;
+                        valueEl.textContent = `${displayValue}${config.unit}`;
                     }
                     
                     if (statusEl && analysis[key]) {
@@ -1459,14 +1467,29 @@
             }
         }
         
+        function updatePhaseInfo(phase) {
+            // Update plant title to show current phase
+            const plantTitle = document.querySelector('.plant-voice-title-text h3');
+            if (plantTitle) {
+                const phaseName = phase.name.charAt(0).toUpperCase() + phase.name.slice(1);
+                plantTitle.textContent = `Eggplant - ${phaseName} Phase`;
+            }
+        }
+        
         function getStatusText(status) {
             const statusMap = {
-                'normal': 'Optimal',
+                'optimal': 'Optimal',
+                'slightly_low': 'Slightly Low',
+                'slightly_high': 'Slightly High',
                 'low': 'Low',
                 'high': 'High',
-                'critical_low': 'Critical',
-                'critical_high': 'Critical',
-                'error': 'Error'
+                'critical_low': 'Critical Low',
+                'critical_high': 'Critical High',
+                'too_low': 'Too Low',
+                'too_high': 'Too High',
+                'normal': 'Optimal',
+                'error': 'Error',
+                'unknown': 'Unknown'
             };
             return statusMap[status] || status;
         }
@@ -1509,18 +1532,38 @@
         function updateHealthStatus(severity) {
             const healthText = document.querySelector('.plant-health-text');
             const healthIcon = document.querySelector('.plant-health');
+            const healthIconSvg = document.querySelector('.plant-health-icon');
             
             if (healthText && healthIcon) {
                 const statusConfig = {
-                    'normal': { text: 'Healthy', color: 'var(--green)', bg: 'rgba(34, 197, 94, 0.1)' },
-                    'warning': { text: 'Needs Attention', color: 'var(--yellow)', bg: 'rgba(245, 158, 11, 0.1)' },
-                    'critical': { text: 'Critical', color: 'var(--red)', bg: 'rgba(239, 68, 68, 0.1)' }
+                    'normal': { 
+                        text: 'Excellent Health', 
+                        color: 'var(--green)', 
+                        bg: 'rgba(34, 197, 94, 0.1)',
+                        iconBg: 'var(--green)'
+                    },
+                    'warning': { 
+                        text: 'Needs Attention', 
+                        color: 'var(--yellow)', 
+                        bg: 'rgba(245, 158, 11, 0.1)',
+                        iconBg: 'var(--yellow)'
+                    },
+                    'critical': { 
+                        text: 'Critical Condition', 
+                        color: 'var(--red)', 
+                        bg: 'rgba(239, 68, 68, 0.1)',
+                        iconBg: 'var(--red)'
+                    }
                 };
                 
                 const config = statusConfig[severity] || statusConfig['normal'];
                 healthText.textContent = config.text;
                 healthText.style.color = config.color;
                 healthIcon.style.background = config.bg;
+                
+                if (healthIconSvg) {
+                    healthIconSvg.style.background = config.iconBg;
+                }
             }
         }
         
