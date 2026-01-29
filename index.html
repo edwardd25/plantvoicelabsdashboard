@@ -919,6 +919,161 @@
         }
 
 
+        /* ==================== AI INSIGHTS ==================== */
+        .ai-insights-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-insights-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--purple), var(--blue));
+        }
+
+        .insights-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .insights-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .insights-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .insights-icon svg {
+            width: 22px;
+            height: 22px;
+            color: var(--purple);
+        }
+
+        .insights-title h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .insights-type {
+            font-size: 12px;
+            color: var(--purple);
+            font-weight: 600;
+        }
+
+        .insights-timestamp {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .insights-content {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .insights-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 12px;
+        }
+
+        .insights-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .insights-content strong {
+            color: var(--text-primary);
+        }
+
+        .insights-content ul {
+            margin: 12px 0;
+            padding-left: 20px;
+        }
+
+        .insights-content li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .insights-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .insight-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .insight-tag.pattern {
+            border-color: rgba(59, 130, 246, 0.3);
+            color: var(--blue);
+        }
+
+        .insight-tag.anomaly {
+            border-color: rgba(239, 68, 68, 0.3);
+            color: var(--red);
+        }
+
+        .insight-tag.correlation {
+            border-color: rgba(16, 185, 129, 0.3);
+            color: var(--emerald);
+        }
+
+        .insight-tag.trend {
+            border-color: rgba(245, 158, 11, 0.3);
+            color: var(--yellow);
+        }
+
+        .no-insight {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        .no-insight svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
         /* ==================== CHART SECTION ==================== */
         .chart-section {
             display: grid;
@@ -1211,6 +1366,29 @@
                 
                 <!-- Hidden Admin Input (for your use only) -->
                 <input type="hidden" id="streamUrl" value="">
+            </div>
+
+            <!-- AI Insights Section -->
+            <div class="section-title">AI Insights</div>
+            <div class="ai-insights-card" id="aiInsightsCard">
+                <div class="insights-header">
+                    <div class="insights-title">
+                        <div class="insights-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 12l8-8"/></svg>
+                        </div>
+                        <div>
+                            <h4>Pattern Analysis</h4>
+                            <span class="insights-type" id="insightType">Daily Analysis</span>
+                        </div>
+                    </div>
+                    <span class="insights-timestamp" id="insightTimestamp">Loading...</span>
+                </div>
+                <div class="insights-content" id="insightContent">
+                    <p>Analyzing sensor patterns...</p>
+                </div>
+                <div class="insights-meta" id="insightMeta">
+                    <!-- Pattern tags will be inserted here -->
+                </div>
             </div>
 
             <!-- Chart Section -->
@@ -1647,6 +1825,119 @@
         }
         
         // ==========================================
+        // FETCH AI INSIGHTS
+        // ==========================================
+        async function fetchInsights() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/v1/dashboard/insights`);
+                const data = await response.json();
+                
+                if (data.success && data.has_insight) {
+                    updateInsightsDisplay(data.insight);
+                } else {
+                    showNoInsight();
+                }
+            } catch (error) {
+                console.error('Failed to fetch insights:', error);
+                showNoInsight();
+            }
+        }
+        
+        function updateInsightsDisplay(insight) {
+            const typeEl = document.getElementById('insightType');
+            const timestampEl = document.getElementById('insightTimestamp');
+            const contentEl = document.getElementById('insightContent');
+            const metaEl = document.getElementById('insightMeta');
+            
+            if (typeEl) {
+                const typeText = insight.type === 'weekly' ? 'Weekly Analysis' : 'Daily Analysis';
+                typeEl.textContent = typeText;
+            }
+            
+            if (timestampEl && insight.timestamp) {
+                const date = new Date(insight.timestamp);
+                const dateStr = date.toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                const timeStr = date.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                timestampEl.textContent = `${dateStr} • ${timeStr}`;
+            }
+            
+            if (contentEl && insight.insight) {
+                // Convert markdown-like text to HTML
+                let html = insight.insight
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/^- (.*?)$/gm, '<li>$1</li>')
+                    .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+                    .split('\n\n')
+                    .map(p => p.startsWith('<ul>') ? p : `<p>${p}</p>`)
+                    .join('');
+                
+                contentEl.innerHTML = html;
+            }
+            
+            if (metaEl && insight.analysis) {
+                let tags = '';
+                
+                const patterns = insight.analysis.patterns || [];
+                const anomalies = insight.analysis.anomalies || [];
+                const correlations = insight.analysis.correlations || [];
+                const trends = insight.analysis.trends || [];
+                
+                if (patterns.length > 0) {
+                    tags += `<span class="insight-tag pattern">📊 ${patterns.length} Pattern${patterns.length > 1 ? 's' : ''} Detected</span>`;
+                }
+                
+                if (anomalies.length > 0) {
+                    tags += `<span class="insight-tag anomaly">⚠️ ${anomalies.length} Anomal${anomalies.length > 1 ? 'ies' : 'y'} Found</span>`;
+                }
+                
+                if (correlations.length > 0) {
+                    tags += `<span class="insight-tag correlation">🔗 ${correlations.length} Correlation${correlations.length > 1 ? 's' : ''}</span>`;
+                }
+                
+                if (trends.length > 0) {
+                    tags += `<span class="insight-tag trend">📈 ${trends.length} Trend${trends.length > 1 ? 's' : ''}</span>`;
+                }
+                
+                if (tags === '') {
+                    tags = `<span class="insight-tag">Phase: ${insight.phase || 'Unknown'}</span>`;
+                }
+                
+                metaEl.innerHTML = tags;
+            }
+        }
+        
+        function showNoInsight() {
+            const contentEl = document.getElementById('insightContent');
+            const metaEl = document.getElementById('insightMeta');
+            const timestampEl = document.getElementById('insightTimestamp');
+            
+            if (contentEl) {
+                contentEl.innerHTML = `
+                    <div class="no-insight">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                        <p>No insights available yet. The first analysis will be generated at 06:05 UTC+7 tomorrow.</p>
+                    </div>
+                `;
+            }
+            
+            if (metaEl) {
+                metaEl.innerHTML = '';
+            }
+            
+            if (timestampEl) {
+                timestampEl.textContent = 'Pending first analysis';
+            }
+        }
+
+        // ==========================================
         // INITIALIZE DASHBOARD
         // ==========================================
         async function initDashboard() {
@@ -1655,10 +1946,12 @@
             await fetchSensorData();
             await fetchLatestMessage();
             await fetchHistoryData();
+            await fetchInsights();
             
             setInterval(fetchSensorData, REFRESH_INTERVAL);
             setInterval(fetchLatestMessage, REFRESH_INTERVAL);
             setInterval(fetchHistoryData, 60000);
+            setInterval(fetchInsights, 300000); // Refresh insights every 5 minutes
             
             console.log('Dashboard initialized. Auto-refresh every 30 seconds.');
         }
