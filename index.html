@@ -1022,6 +1022,29 @@
             margin-bottom: 8px;
         }
 
+        .insights-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 20px 0 12px 0;
+        }
+
+        .insights-content h3:first-child {
+            margin-top: 0;
+        }
+
+        .insights-content h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--emerald);
+            margin: 16px 0 8px 0;
+        }
+
+        .insights-content em {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
         .insights-meta {
             display: flex;
             flex-wrap: wrap;
@@ -1870,14 +1893,55 @@
             }
             
             if (contentEl && insight.insight) {
-                // Convert markdown-like text to HTML
-                let html = insight.insight
-                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                    .replace(/^- (.*?)$/gm, '<li>$1</li>')
-                    .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
-                    .split('\n\n')
-                    .map(p => p.startsWith('<ul>') ? p : `<p>${p}</p>`)
-                    .join('');
+                // Convert markdown to HTML line by line
+                let lines = insight.insight.split('\n');
+                let html = '';
+                let inList = false;
+                
+                for (let line of lines) {
+                    line = line.trim();
+                    
+                    if (!line) {
+                        if (inList) {
+                            html += '</ul>';
+                            inList = false;
+                        }
+                        continue;
+                    }
+                    
+                    // Headers
+                    if (line.startsWith('### ')) {
+                        if (inList) { html += '</ul>'; inList = false; }
+                        html += `<h4>${line.substring(4)}</h4>`;
+                    } else if (line.startsWith('## ')) {
+                        if (inList) { html += '</ul>'; inList = false; }
+                        html += `<h3>${line.substring(3)}</h3>`;
+                    } else if (line.startsWith('# ')) {
+                        if (inList) { html += '</ul>'; inList = false; }
+                        html += `<h3>${line.substring(2)}</h3>`;
+                    }
+                    // Bullet points
+                    else if (line.startsWith('• ') || line.startsWith('- ') || line.startsWith('* ')) {
+                        if (!inList) {
+                            html += '<ul>';
+                            inList = true;
+                        }
+                        let content = line.substring(2);
+                        content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                        content = content.replace(/\*(.*?)\*/g, '<em>$1</em>');
+                        html += `<li>${content}</li>`;
+                    }
+                    // Regular paragraph
+                    else {
+                        if (inList) { html += '</ul>'; inList = false; }
+                        let content = line;
+                        content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                        content = content.replace(/\*(.*?)\*/g, '<em>$1</em>');
+                        html += `<p>${content}</p>`;
+                    }
+                }
+                
+                if (inList) html += '</ul>';
                 
                 contentEl.innerHTML = html;
             }
