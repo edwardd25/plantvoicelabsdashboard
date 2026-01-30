@@ -919,6 +919,20 @@
         }
 
 
+        /* ==================== AI SECTION GRID ==================== */
+        .ai-section-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        @media (max-width: 1024px) {
+            .ai-section-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         /* ==================== AI INSIGHTS ==================== */
         .ai-insights-card {
             background: var(--bg-card);
@@ -1082,6 +1096,237 @@
         .insight-tag.trend {
             border-color: rgba(245, 158, 11, 0.3);
             color: var(--yellow);
+        }
+
+        /* ==================== GROWTH COMPARISON ==================== */
+        .growth-comparison-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .growth-comparison-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--emerald), var(--blue));
+        }
+
+        .comparison-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .comparison-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .comparison-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .comparison-icon svg {
+            width: 22px;
+            height: 22px;
+            color: var(--emerald);
+        }
+
+        .comparison-title h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .comparison-phase {
+            font-size: 12px;
+            color: var(--emerald);
+            font-weight: 600;
+        }
+
+        .comparison-timestamp {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .overall-score {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .score-value {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .score-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .score-status {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .score-status.excellent {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--emerald);
+        }
+
+        .score-status.good {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--blue);
+        }
+
+        .score-status.fair {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--yellow);
+        }
+
+        .score-status.poor {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--red);
+        }
+
+        .comparison-metrics {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .metric-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .metric-label {
+            width: 100px;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .metric-bar-container {
+            flex: 1;
+            height: 8px;
+            background: var(--bg-primary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .metric-bar {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .metric-bar.optimal {
+            background: var(--emerald);
+        }
+
+        .metric-bar.slightly_low,
+        .metric-bar.slightly_high,
+        .metric-bar.slightly_behind {
+            background: var(--yellow);
+        }
+
+        .metric-bar.low,
+        .metric-bar.high,
+        .metric-bar.behind {
+            background: var(--orange);
+        }
+
+        .metric-bar.critical_low,
+        .metric-bar.critical_high {
+            background: var(--red);
+        }
+
+        .metric-bar.on_track,
+        .metric-bar.mid_phase {
+            background: var(--emerald);
+        }
+
+        .metric-bar.extended {
+            background: var(--yellow);
+        }
+
+        .metric-status {
+            width: 80px;
+            font-size: 11px;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .metric-status.optimal,
+        .metric-status.on_track,
+        .metric-status.mid_phase {
+            color: var(--emerald);
+        }
+
+        .metric-status.slightly_low,
+        .metric-status.slightly_high,
+        .metric-status.slightly_behind,
+        .metric-status.extended {
+            color: var(--yellow);
+        }
+
+        .metric-status.low,
+        .metric-status.high,
+        .metric-status.behind {
+            color: var(--orange);
+        }
+
+        .metric-status.critical_low,
+        .metric-status.critical_high {
+            color: var(--red);
+        }
+
+        .comparison-recommendation {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .comparison-recommendation p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .comparison-recommendation strong {
+            color: var(--text-primary);
         }
 
         .no-insight {
@@ -1391,9 +1636,11 @@
                 <input type="hidden" id="streamUrl" value="">
             </div>
 
-            <!-- AI Insights Section -->
-            <div class="section-title">AI Insights</div>
-            <div class="ai-insights-card" id="aiInsightsCard">
+            <!-- AI Section Grid -->
+            <div class="section-title">AI Analysis</div>
+            <div class="ai-section-grid">
+                <!-- AI Insights -->
+                <div class="ai-insights-card" id="aiInsightsCard">
                 <div class="insights-header">
                     <div class="insights-title">
                         <div class="insights-icon">
@@ -1411,6 +1658,37 @@
                 </div>
                 <div class="insights-meta" id="insightMeta">
                     <!-- Pattern tags will be inserted here -->
+                </div>
+            </div>
+
+                <!-- Growth Comparison -->
+                <div class="growth-comparison-card" id="growthComparisonCard">
+                    <div class="comparison-header">
+                        <div class="comparison-title">
+                            <div class="comparison-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+                            </div>
+                            <div>
+                                <h4>Growth Comparison</h4>
+                                <span class="comparison-phase" id="comparisonPhase">vs Benchmark</span>
+                            </div>
+                        </div>
+                        <span class="comparison-timestamp" id="comparisonTimestamp">Loading...</span>
+                    </div>
+                    
+                    <div class="overall-score" id="overallScore">
+                        <div class="score-value" id="scoreValue">--</div>
+                        <div class="score-label">Overall Score</div>
+                        <span class="score-status" id="scoreStatus">Loading</span>
+                    </div>
+                    
+                    <div class="comparison-metrics" id="comparisonMetrics">
+                        <!-- Metrics will be inserted here -->
+                    </div>
+                    
+                    <div class="comparison-recommendation" id="comparisonRecommendation">
+                        <p>Loading recommendation...</p>
+                    </div>
                 </div>
             </div>
 
@@ -1848,6 +2126,127 @@
         }
         
         // ==========================================
+        // FETCH GROWTH COMPARISON
+        // ==========================================
+        async function fetchComparison() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/v1/dashboard/comparison`);
+                const data = await response.json();
+                
+                if (data.success && data.has_comparison) {
+                    updateComparisonDisplay(data.comparison);
+                } else {
+                    showNoComparison();
+                }
+            } catch (error) {
+                console.error('Failed to fetch comparison:', error);
+                showNoComparison();
+            }
+        }
+        
+        function updateComparisonDisplay(comparison) {
+            // Update phase
+            const phaseEl = document.getElementById('comparisonPhase');
+            if (phaseEl) {
+                phaseEl.textContent = `Day ${comparison.experiment_day} • ${comparison.phase.charAt(0).toUpperCase() + comparison.phase.slice(1)}`;
+            }
+            
+            // Update timestamp
+            const timestampEl = document.getElementById('comparisonTimestamp');
+            if (timestampEl && comparison.timestamp) {
+                const date = new Date(comparison.timestamp);
+                timestampEl.textContent = date.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+            }
+            
+            // Update overall score
+            const scoreValueEl = document.getElementById('scoreValue');
+            const scoreStatusEl = document.getElementById('scoreStatus');
+            if (scoreValueEl) {
+                scoreValueEl.textContent = comparison.overall_score;
+            }
+            if (scoreStatusEl) {
+                scoreStatusEl.textContent = comparison.overall_status.charAt(0).toUpperCase() + comparison.overall_status.slice(1);
+                scoreStatusEl.className = `score-status ${comparison.overall_status}`;
+            }
+            
+            // Update metrics
+            const metricsEl = document.getElementById('comparisonMetrics');
+            if (metricsEl && comparison.comparisons) {
+                let metricsHtml = '';
+                
+                const metricOrder = ['timeline', 'temperature', 'humidity', 'soil_moisture', 'light', 'gdd_progress'];
+                const metricLabels = {
+                    'timeline': 'Timeline',
+                    'temperature': 'Temperature',
+                    'humidity': 'Humidity',
+                    'soil_moisture': 'Soil Moisture',
+                    'light': 'Light',
+                    'gdd_progress': 'GDD Progress'
+                };
+                
+                for (const key of metricOrder) {
+                    if (comparison.comparisons[key]) {
+                        const metric = comparison.comparisons[key];
+                        const status = metric.status || 'optimal';
+                        const statusDisplay = status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                        
+                        // Calculate bar width based on status
+                        let barWidth = 100;
+                        if (status === 'optimal' || status === 'on_track') barWidth = 100;
+                        else if (status === 'slightly_low' || status === 'slightly_high' || status === 'slightly_behind' || status === 'mid_phase') barWidth = 75;
+                        else if (status === 'low' || status === 'high' || status === 'behind' || status === 'extended') barWidth = 50;
+                        else if (status === 'critical_low' || status === 'critical_high') barWidth = 25;
+                        
+                        metricsHtml += `
+                            <div class="metric-row">
+                                <span class="metric-label">${metricLabels[key]}</span>
+                                <div class="metric-bar-container">
+                                    <div class="metric-bar ${status}" style="width: ${barWidth}%"></div>
+                                </div>
+                                <span class="metric-status ${status}">${statusDisplay}</span>
+                            </div>
+                        `;
+                    }
+                }
+                
+                metricsEl.innerHTML = metricsHtml;
+            }
+            
+            // Update recommendation
+            const recEl = document.getElementById('comparisonRecommendation');
+            if (recEl && comparison.recommendation) {
+                recEl.innerHTML = `<p>💡 ${comparison.recommendation}</p>`;
+            }
+        }
+        
+        function showNoComparison() {
+            const scoreValueEl = document.getElementById('scoreValue');
+            const scoreStatusEl = document.getElementById('scoreStatus');
+            const metricsEl = document.getElementById('comparisonMetrics');
+            const recEl = document.getElementById('comparisonRecommendation');
+            const timestampEl = document.getElementById('comparisonTimestamp');
+            
+            if (scoreValueEl) scoreValueEl.textContent = '--';
+            if (scoreStatusEl) {
+                scoreStatusEl.textContent = 'Pending';
+                scoreStatusEl.className = 'score-status';
+            }
+            if (metricsEl) {
+                metricsEl.innerHTML = '<p style="text-align: center; color: var(--text-muted); font-size: 13px;">No comparison data yet. First analysis at 06:15 UTC+7.</p>';
+            }
+            if (recEl) {
+                recEl.innerHTML = '<p>Waiting for first comparison analysis...</p>';
+            }
+            if (timestampEl) {
+                timestampEl.textContent = 'Pending';
+            }
+        }
+
+        // ==========================================
         // FETCH AI INSIGHTS
         // ==========================================
         async function fetchInsights() {
@@ -2011,11 +2410,13 @@
             await fetchLatestMessage();
             await fetchHistoryData();
             await fetchInsights();
+            await fetchComparison();
             
             setInterval(fetchSensorData, REFRESH_INTERVAL);
             setInterval(fetchLatestMessage, REFRESH_INTERVAL);
             setInterval(fetchHistoryData, 60000);
             setInterval(fetchInsights, 300000); // Refresh insights every 5 minutes
+            setInterval(fetchComparison, 300000); // Refresh comparison every 5 minutes
             
             console.log('Dashboard initialized. Auto-refresh every 30 seconds.');
         }
